@@ -53,8 +53,13 @@ class ExperienceReplayBuffer:
         Returns:
             list: A collection of uncorrelated experiences
         """
-        return np.stack(random.sample(self._buffer, batch_size))
-        
+        experiences = random.sample(self._buffer, batch_size)
+        states = np.vstack([e[0] for e in experiences]).astype(np.int32)
+        actions = np.vstack([e[1] for e in experiences]).astype(np.int32)
+        rewards = np.vstack([e[2] for e in experiences]).astype(np.float32)
+        next_states = np.vstack([e[3] for e in experiences]).astype(np.int32)
+        dones = np.vstack([e[4] for e in experiences]).astype(np.uint8)
+        return states, actions, rewards, next_states, dones
 
     def clear(self):
         """Clear the buffers
@@ -63,3 +68,9 @@ class ExperienceReplayBuffer:
 
     def __len__(self):
         return len(self._buffer)
+
+    def __str__(self) -> str:
+        s = "Experience Replay Buffer:\nCount:\tState\tAction\tReward\tNext\tDone"
+        for i, e in enumerate(self._buffer):
+            s += f"\n{i}\t|{len(e[0])}|\t{e[1]}\t{e[2]}\t|{len(e[3])}|\t{e[4]}"
+        return s

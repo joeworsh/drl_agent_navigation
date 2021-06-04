@@ -1,0 +1,1 @@
+{"episodes": 1000, "batch_size": 64, "buffer_size": 10000, "learning_rate": 0.0005, "discount_rate": 0.9, "update_rate": 4, "epsilon_decay": 0.995, "epsilon_decay_rate": 1, "min_epsilon": 0.01, "replay": "uniform", "prioritized_replay_damp": 0.6, "e_constant": 1e-06, "prioritized_replay_beta_anneal_rate": 100, "learning_start": 64, "double_dqn": true, "deuling_dqn": false}

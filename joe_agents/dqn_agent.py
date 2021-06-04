@@ -106,14 +106,14 @@ class DqnAgent:
         if hyperparameters is not None:
             self._hyperparameters.update(hyperparameters)
         hidden_layers = self._hyperparameters[HIDDEN_LAYERS] if HIDDEN_LAYERS in self._hyperparameters else DEFAULT_HIDDEN_LAYERS
+        deuling_dqn = self._hyperparameters[DEULING_DQN] if DEULING_DQN in self._hyperparameters else DEFAULT_DEULING_DQN
 
         # verify the hardware to run the agent on
         self._device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        print(f'Using {self._device} device')
         
         # instantiate the neural networks that drive decision making
-        self._q_network = QNetwork(state_size, action_size, hidden_layers).to(self._device)
-        self._q_target = QNetwork(state_size, action_size, hidden_layers).to(self._device)
+        self._q_network = QNetwork(state_size, action_size, hidden_layers, deuling_dqn).to(self._device)
+        self._q_target = QNetwork(state_size, action_size, hidden_layers, deuling_dqn).to(self._device)
 
         # create a policy around the q network which will act as our estimated optimal policy
         self._optimal_policy = QNetworkPolicy(self._q_network, self._device)
@@ -145,7 +145,6 @@ class DqnAgent:
         replay = self._hyperparameters[REPLAY] if REPLAY in self._hyperparameters else DEFAULT_REPLAY
         learning_start = self._hyperparameters[LEARNING_START] if LEARNING_START in self._hyperparameters else DEFAULT_LEARNING_START
         double_dqn = self._hyperparameters[DOUBLE_DQN] if DOUBLE_DQN in self._hyperparameters else DEFAULT_DOUBLE_DQN
-        deuling_dqn = self._hyperparameters[DEULING_DQN] if DEULING_DQN in self._hyperparameters else DEFAULT_DEULING_DQN
 
         # create the replay buffer for training
         if replay == REPLAY_PRIORITIZED:
@@ -210,7 +209,7 @@ class DqnAgent:
                     dones = torch.from_numpy(experiences[idx_start+4]).float().to(self._device)
 
                     # capture buffer statistics for debugging
-                    batch_reward_sums.append(np.sum(experiences[2]))
+                    batch_reward_sums.append(float(np.sum(experiences[2])))
                     batch_buffer_len.append(len(buffer))
 
                     # train the q_network to better predict the action-values
@@ -272,4 +271,4 @@ class DqnAgent:
         Args:
             path (str, optional): Name of the agent to load. Defaults to "checkpoint.pth".
         """
-        self._q_network.load_state_dict(torch.load('checkpoint.pth'))
+        self._q_network.load_state_dict(torch.load(path))

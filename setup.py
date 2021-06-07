@@ -8,5 +8,8 @@ setup(name='joe-agents',
       license='MIT',
       author='Joe Worsham',
       url='https://github.com/joeworsh/drl_agent_navigation',
-      packages=find_packages()
-      )
+      packages=find_packages(),
+      install_requires=[
+            "gym", "numpy", "torch", "tqdm"
+      ]
+)

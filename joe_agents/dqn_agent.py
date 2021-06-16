@@ -232,6 +232,8 @@ class DqnAgent:
                     optimizer.step()
 
                     # update the target network to slowly converge to the q network
+                    # copy-update mechanism from
+                    # https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/dqn_agent.py#L116
                     for target_param, local_param in zip(self._q_target.parameters(), self._q_network.parameters()):
                         target_param.data.copy_(tau*local_param.data + (1.0-tau)*target_param.data)
 

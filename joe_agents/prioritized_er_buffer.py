@@ -108,9 +108,3 @@ class PrioritizedExperienceReplayBuffer:
 
     def __len__(self):
         return len(self._buffer)
-
-    def __str__(self) -> str:
-        s = "Experience Replay Buffer:\nCount:\tState\tAction\tReward\tNext\tDone"
-        for i, e in enumerate(self._buffer):
-            s += f"\n{i})\t|{len(e[0])}|\t{e[1]}\t{e[2]}\t|{len(e[3])}|\t{e[4]}"
-        return s

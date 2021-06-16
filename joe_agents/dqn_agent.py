@@ -29,7 +29,7 @@ MIN_EPSILON = "min_epsilon"
 TAU = "tau"
 REPLAY = "replay"
 PRIORITIZED_REPLAY_DAMP = "prioritized_replay_damp"
-PRIORITIZED_REPLAY_E_CONSTANT = "e_constnat"
+PRIORITIZED_REPLAY_E_CONSTANT = "e_constant"
 PRIORITIZED_REPLAY_BETA_ANNEAL_RATE = "prioritized_replay_beta_anneal_rate"
 LEARNING_START = "learning_start"
 DOUBLE_DQN = "double_dqn"
@@ -214,9 +214,11 @@ class DqnAgent:
 
                     # train the q_network to better predict the action-values
                     # note: the estimated correct action-value comes from the target network
-                    eval_policy = self._q_target if double_dqn else self._q_network
-                    q_targets_next = eval_policy(next_states).detach().max(1)[0].unsqueeze(1)
-                    q_targets = rewards + (gamma * q_targets_next * (1 - dones))
+                    next_action_policy = self._q_network if double_dqn else self._q_target
+                    eval_policy = self._q_target
+                    q_next_action = torch.argmax(next_action_policy(next_states).detach(), 1, keepdim=False)
+                    q_next_value = eval_policy(next_states).detach()[torch.arange(batch_size), q_next_action].unsqueeze(1)
+                    q_targets = rewards + (gamma * q_next_value * (1 - dones))
                     q_expected = self._q_network(states).gather(1, actions)
                     loss = F.mse_loss(q_expected, q_targets, reduction='none')
                     if replay == REPLAY_PRIORITIZED:

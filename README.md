@@ -121,6 +121,7 @@ that explores all the results produced by the grid search
 parameters found from the grid search
 * [DQN Evaluate.ipynb](https://github.com/joeworsh/drl_agent_navigation/blob/main/DQN%20Evaluate.ipynb): Evaluate the model
 trained by `DQN Train.ipynb`
+* [Report.ipynb](https://github.com/joeworsh/drl_agent_navigation/blob/main/Report.ipynb): Experiment report. NOTE: Github might fail to render this - simply hit "reload" until it renders correctly.
 
 ## Instructions for Training and Evaluating
 

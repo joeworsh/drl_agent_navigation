@@ -7,6 +7,8 @@ import torch.optim as optim
 
 from tqdm import tqdm
 
+from collections import deque
+
 from joe_agents.e_greedy_policy import EGreedyPolicy
 from joe_agents.er_buffer import ExperienceReplayBuffer
 from joe_agents.prioritized_er_buffer import PrioritizedExperienceReplayBuffer
@@ -167,6 +169,8 @@ class DqnAgent:
         # go ahead and train
         global_steps = 0
         scores = []
+        score_window = deque(maxlen=100)
+        avg_scores = []
         epsilons = []
         batch_reward_sums = []
         batch_buffer_len = []
@@ -239,6 +243,8 @@ class DqnAgent:
 
             # log the performance and training characteristics
             scores.append(score)
+            score_window.append(score)
+            avg_scores.append(np.mean(score_window))
             epsilons.append(e_greedy.epsilon)
             
             # decay epsilon between episodes at the specified rate
@@ -246,7 +252,7 @@ class DqnAgent:
                 e_greedy.epsilon = max(min_epsilon, e_greedy.epsilon * epsilon_decay)
 
         # return training history
-        return scores, epsilons, buffer_stats
+        return scores, avg_scores, epsilons, buffer_stats
 
 
     def act(self, state) -> int:
